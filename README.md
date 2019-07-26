@@ -26,7 +26,6 @@ python3 app.py
 It's run web application on http://127.0.0.1:5000/
 The app connect to mysql db and return all employee from table employees
 
-```
-(C) Copy from article https://code.tutsplus.com/ru/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972
+---
+Based on from article https://code.tutsplus.com/ru/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972
 and github https://github.com/jay3dec/PythonFlaskMySQLApp---Part-1
-```
