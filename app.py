@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'jay'
 app.config['MYSQL_DATABASE_DB'] = 'BucketList'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_HOST'] = 'some-mysql'
 mysql.init_app(app)
 
 # Web main page method
@@ -63,4 +63,4 @@ def main():
 if __name__ == "__main__":
 
     # Up web server
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)

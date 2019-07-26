@@ -3,30 +3,14 @@ Demo project python + flask + mysql
 
 Demo
 
-[![Demo](http://img.youtube.com/vi/Syb6H_SPO6Y/3.jpg)](https://youtu.be/Syb6H_SPO6Y)
+[![Demo](http://img.youtube.com/vi/Ha0RQBHU7Hg/3.jpg)](https://youtu.be/Ha0RQBHU7Hg)
 
 How to use:
 
-I. Install Python3 and docker
-
-II. Install python requirements
-
 ```bash
- pip3 install -r requirements.txt
+docker-compose up --force-recreate
 ```
 
-III. Run mysql db
-```bash
-cd mysql
-./mysql.sh
-cd -
-```
-It's run mysql in docker container and create sample data from mysql/data/data.sql
-
-IV. Run app
-```bash
-python3 app.py
-```
 It's run web application on http://127.0.0.1:5000/
 The app connect to mysql db and return all employee from table employees
 
