@@ -43,7 +43,7 @@ pipeline {
             script {
             sh """
                        		ab -n 100 -c 10 -r http://127.0.0.1:5000/ > project.txt
-                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=xoxp-521793759088-661415292292-720088109968-aad8ca9b1067e10e2b6b612bbc372c38 https://slack.com/api/files.upload
+                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=$TOKEN https://slack.com/api/files.upload
 		                """
             }
             }
