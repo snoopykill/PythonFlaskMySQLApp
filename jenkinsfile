@@ -1,0 +1,60 @@
+pipeline { 
+    agent any 
+    stages {
+        stage('Clone repository') { 
+            steps { 
+                git url: 'https://github.com/snoopykill/PythonFlaskMySQLApp.git'
+            }
+        }
+        stage('Checking repository'){
+            steps { 
+                sh "ls -l"
+            }
+        }
+        stage('Build docker') {
+            steps {
+            script {
+            dockerImage = docker.build("snoopykill/python-app")
+            }
+            }
+        }
+        stage('Push docker') {
+            steps {
+              script {
+            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            dockerImage.push("${env.BUILD_NUMBER}")
+            dockerImage.push("latest")
+            }
+            }
+            }
+        }
+        stage('Docker compose') {
+            steps {
+            script {
+            sh """
+                       		docker-compose down
+							docker-compose up -d
+                """
+            }
+            }
+        }
+        stage('Test site by Apache Bench') {
+            steps {
+            script {
+            sh """
+                       		ab -n 100 -c 10 -r http://127.0.0.1:5000/ > project.txt
+                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=xoxp-521793759088-661415292292-720088109968-aad8ca9b1067e10e2b6b612bbc372c38 https://slack.com/api/files.upload
+		                """
+            }
+            }
+        }
+        }
+    post {
+            success {
+                slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            }
+            failure {
+                slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            }
+        }
+}
