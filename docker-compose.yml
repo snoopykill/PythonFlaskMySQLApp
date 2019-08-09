@@ -16,7 +16,7 @@ services:
     depends_on:
       - some-mysql
     build: .
-    image: snoopykill/python-app:latest
+    image: snoopykill/python-app:$BUILD
     links:
       - some-mysql
     ports:
