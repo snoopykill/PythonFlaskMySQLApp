@@ -1,5 +1,9 @@
 pipeline { 
-    agent any 
+    agent any
+    environment {
+    BUILD = "${env.BUILD_NUMBER}"
+    SLACK_TOKEN = credentials('slack-token')
+    }
     stages {
         stage('Clone repository') { 
             steps { 
@@ -43,7 +47,7 @@ pipeline {
             script {
             sh """
                        		ab -n 100 -c 10 -r http://127.0.0.1:5000/ > project.txt
-                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=$TOKEN https://slack.com/api/files.upload
+                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=${env.SLACK_TOKEN} https://slack.com/api/files.upload
 		                """
             }
             }
