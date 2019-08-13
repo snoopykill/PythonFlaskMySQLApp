@@ -46,23 +46,28 @@ pipeline {
         stage('Test site by Apache Bench') {
             steps {
             script {
-                 try {
-            sh """
+                sh """
                        		ab -n 100 -c 10 -r http://127.0.0.1:50000/ > project.txt
                        		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=${env.SLACK_TOKEN} https://slack.com/api/files.upload
 		                """
+        }
             }
-        catch (exc) {
-            env BUILD = $BUILD_PREV
-            sh """
+        }
+        stage('Recovery deploy') {
+            when {
+                expression {
+                    currentBuild.result == 'FAILURE'
+                }
+            }
+                steps {
+                        sh """
+                            export BUILD=$BUILD_PREV
                        		docker-compose down
 							docker-compose up -d
                 """
             }    
-            }
         }
-            }
-        }
+    }
     post {
             success {
                 slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
