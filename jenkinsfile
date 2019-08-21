@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
     BUILD = "${env.BUILD_NUMBER}"
-    BUILD_PREV = "${env.BUILD_NUMBER.toInteger() - 1}"
     SLACK_TOKEN = credentials('slack-token')
     }
     stages {
@@ -47,25 +46,11 @@ pipeline {
             steps {
             script {
                 sh """
-                       		ab -n 100 -c 10 -r http://127.0.0.1:50000/ > project.txt
-                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=${env.SLACK_TOKEN} https://slack.com/api/files.upload
+                       		111ab -n 100 -c 10 -r http://127.0.0.1:50000/ > project.txt
+                       		111curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=${env.SLACK_TOKEN} https://slack.com/api/files.upload
 		                """
         }
             }
-        }
-        stage('Recovery deploy') {
-            when {
-                expression {
-                    currentBuild.result == 'FAILURE'
-                }
-            }
-                steps {
-                        sh """
-                            export BUILD=$BUILD_PREV
-                       		docker-compose down
-							docker-compose up -d
-                """
-            }    
         }
     }
     post {
@@ -73,7 +58,17 @@ pipeline {
                 slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
             }
             failure {
-                slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                script {
+                    BUILD = "${env.BUILD_NUMBER.toInteger() - 1}"
+                sh """      echo $BUILD
+                      		docker-compose down
+							docker-compose up -d
+                      		ab -n 100 -c 10 -r http://127.0.0.1:50000/ > project.txt
+                       		curl -F file=@project.txt -F channels=CLBKQPFB5 -F token=${env.SLACK_TOKEN} https://slack.com/api/files.upload
+                """
+            } 
+                    
+                slackSend (color: '#FF0000', message: "FAILED - RECOVERY PREV. BUILD : Job '${env.JOB_NAME} [${env.BUILD_NUMBER.toInteger() - 1}]' (${env.BUILD_URL})")
             }
         }
 }
